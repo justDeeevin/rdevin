@@ -86,7 +86,7 @@ where
 
 /// Simulate an input event.
 ///
-/// ## Example
+/// # Example
 ///
 /// ```no_run
 /// use rdev::{simulate, Button, EventType, Key};
@@ -120,7 +120,7 @@ pub fn display_size() -> Result<(u64, u64), DisplayError> {
 ///
 /// The callback can return `None` to ignore the event, or the event it was given to allow it to pass. **The event cannot be modified.**
 ///
-/// ## Example
+/// # Example
 ///
 /// ```no_run
 /// use rdev::{grab, Event, EventType, Key};
