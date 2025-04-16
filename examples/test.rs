@@ -1,7 +1,8 @@
 #[cfg(target_os = "linux")]
 use core::time;
+use redev::keycodes::linux::code_from_key;
 #[cfg(target_os = "linux")]
-use redev::{key_from_code, linux_keycode_from_key, simulate};
+use redev::{key_from_code, simulate};
 use redev::{Event, EventType, GrabError, Key as RdevKey};
 #[cfg(target_os = "linux")]
 use std::{collections::HashMap, mem::zeroed, os::raw::c_int, ptr, thread, time::SystemTime};
@@ -38,8 +39,8 @@ fn convert_event(key: RdevKey, is_press: bool) -> Event {
         },
         time: SystemTime::now(),
         unicode: None,
-        platform_code: linux_keycode_from_key(key).unwrap_or_default() as _,
-        position_code: linux_keycode_from_key(key).unwrap_or_default() as _,
+        platform_code: code_from_key(key).unwrap_or_default() as _,
+        position_code: code_from_key(key).unwrap_or_default() as _,
         usb_hid: 0,
     }
 }
@@ -54,7 +55,7 @@ fn ungrab_key(display: *mut Display, grab_window: u64, keycode: i32) {
 #[cfg(target_os = "linux")]
 fn ungrab_keys(display: *mut Display, grab_window: u64) {
     for key in RdevKey::iter() {
-        let keycode: i32 = linux_keycode_from_key(key).unwrap_or_default() as _;
+        let keycode: i32 = code_from_key(key).unwrap_or_default() as _;
         if is_key_grabed(key) {
             grab_key(display, grab_window, keycode);
             GRABED.lock().unwrap().insert(key);
@@ -90,7 +91,7 @@ fn grab_keys(display: *mut Display, grab_window: u64) {
         unsafe {
             if let Some(callback) = &mut GLOBAL_CALLBACK {
                 let grab = callback(event).is_none();
-                let keycode: i32 = linux_keycode_from_key(key).unwrap_or_default() as _;
+                let keycode: i32 = code_from_key(key).unwrap_or_default() as _;
 
                 if grab && !is_key_grabed(key) {
                     println!("{:?} {:?}", key, keycode);

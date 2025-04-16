@@ -1,9 +1,9 @@
 #[cfg(target_os = "linux")]
 use core::time::Duration;
+#[cfg(target_os = "linux")]
+use redev::linux::{disable_grab, enable_grab, exit_grab_listen, start_grab_listen};
 use redev::Event;
 use redev::EventType;
-#[cfg(target_os = "linux")]
-use redev::{disable_grab, enable_grab, exit_grab_listen, start_grab_listen};
 #[cfg(target_os = "linux")]
 use std::thread;
 
@@ -31,9 +31,11 @@ fn callback(event: Event) -> Option<Event> {
             #[cfg(target_os = "linux")]
             {
                 win_scancode =
-                    redev::linux_code_to_win_scancode(event.platform_code as _).unwrap_or(0);
+                    redev::codes_conv::linux_code_to_win_scancode(event.platform_code as _)
+                        .unwrap_or(0);
                 macos_keycode =
-                    redev::linux_code_to_macos_code(event.platform_code as _).unwrap_or(0);
+                    redev::codes_conv::linux_code_to_macos_code(event.platform_code as _)
+                        .unwrap_or(0);
                 linux_keycode = event.platform_code as _;
             };
 

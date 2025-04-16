@@ -1,9 +1,9 @@
 #[cfg(target_os = "linux")]
 use core::time::Duration;
+#[cfg(target_os = "linux")]
+use redev::linux::{disable_grab, enable_grab, exit_grab_listen, start_grab_listen};
 use redev::Event;
 use redev::EventType;
-#[cfg(target_os = "linux")]
-use redev::{disable_grab, enable_grab, exit_grab_listen, start_grab_listen};
 #[cfg(target_os = "linux")]
 use std::thread;
 

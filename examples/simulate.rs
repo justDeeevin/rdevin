@@ -119,8 +119,8 @@ fn test_simulate_char() {
 #[cfg(target_os = "linux")]
 fn simulate_combination() {
     send(&EventType::KeyPress(Key::ControlLeft));
-    redev::simulate_char('€', true);
-    redev::simulate_char('€', false);
+    redev::linux::simulate_char('€', true);
+    redev::linux::simulate_char('€', false);
     send(&EventType::KeyRelease(Key::ControlLeft));
 }
 
