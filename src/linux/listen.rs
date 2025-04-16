@@ -2,22 +2,36 @@ extern crate libc;
 extern crate x11;
 use crate::linux::common::{convert, FALSE, KEYBOARD};
 use crate::linux::keyboard::Keyboard;
-use crate::redev::{Event, ListenError};
+use crate::redev::Event;
 use std::convert::TryInto;
 use std::ffi::CStr;
 use std::os::raw::{c_char, c_int, c_uchar, c_uint, c_ulong};
 use std::ptr::null;
+use thiserror::Error;
 use x11::xlib;
 use x11::xrecord;
 
 static mut RECORD_ALL_CLIENTS: c_ulong = xrecord::XRecordAllClients;
 static mut GLOBAL_CALLBACK: Option<Box<dyn FnMut(Event)>> = None;
 
+#[derive(Debug, Error)]
+/// Errors that occur when trying to capture OS events.
+pub enum ListenError {
+    #[error("No displays")]
+    NoDisplays,
+    #[error("Failed to enable X11 recording context")]
+    EnableRecordContext,
+    #[error("Failed to create X11 recording context")]
+    CreateRecordContext,
+    #[error("Failed to initialize X11 extension")]
+    InitExtension,
+}
+
 pub fn listen<T>(callback: T) -> Result<(), ListenError>
 where
     T: FnMut(Event) + 'static,
 {
-    let keyboard = Keyboard::new().ok_or(ListenError::KeyboardError)?;
+    let keyboard = Keyboard::new().ok_or(ListenError::NoDisplays)?;
 
     unsafe {
         KEYBOARD = Some(keyboard);
@@ -25,13 +39,12 @@ where
         // Open displays
         let dpy_control = xlib::XOpenDisplay(null());
         if dpy_control.is_null() {
-            return Err(ListenError::MissingDisplayError);
+            return Err(ListenError::NoDisplays);
         }
-        let extension_name = CStr::from_bytes_with_nul(b"RECORD\0")
-            .map_err(|_| ListenError::XRecordExtensionError)?;
+        let extension_name = CStr::from_bytes_with_nul(b"RECORD\0").unwrap();
         let extension = xlib::XInitExtension(dpy_control, extension_name.as_ptr());
         if extension.is_null() {
-            return Err(ListenError::XRecordExtensionError);
+            return Err(ListenError::InitExtension);
         }
 
         // Prepare record range
@@ -55,7 +68,7 @@ where
         );
 
         if context == 0 {
-            return Err(ListenError::RecordContextError);
+            return Err(ListenError::CreateRecordContext);
         }
 
         xlib::XSync(dpy_control, FALSE);
@@ -63,7 +76,7 @@ where
         let result =
             xrecord::XRecordEnableContext(dpy_control, context, Some(record_callback), &mut 0);
         if result == 0 {
-            return Err(ListenError::RecordContextEnablingError);
+            return Err(ListenError::EnableRecordContext);
         }
     }
     Ok(())

@@ -95,15 +95,6 @@ unsafe extern "system" fn raw_callback_keyboard(code: i32, param: usize, lpdata:
     })
 }
 
-impl From<HookError> for GrabError {
-    fn from(error: HookError) -> Self {
-        match error {
-            HookError::Mouse(code) => GrabError::MouseHookError(code),
-            HookError::Key(code) => GrabError::KeyHookError(code),
-        }
-    }
-}
-
 fn do_hook<T>(callback: T) -> Result<(HHOOK, HHOOK), GrabError>
 where
     T: FnMut(Event) -> Option<Event> + 'static,
@@ -121,7 +112,7 @@ where
         hook_keyboard =
             SetWindowsHookExA(WH_KEYBOARD_LL, Some(raw_callback_keyboard), null_mut(), 0);
         if hook_keyboard.is_null() {
-            return Err(GrabError::KeyHookError(GetLastError()));
+            return Err(Error::KeyHookError(GetLastError())).into();
         }
 
         if !crate::keyboard_only() {
@@ -131,7 +122,7 @@ where
                     // Fatal error
                     log::error!("UnhookWindowsHookEx keyboard {}", Error::last_os_error());
                 }
-                return Err(GrabError::MouseHookError(GetLastError()));
+                return Err(Error::MouseHookError(GetLastError()).into());
             }
         }
         *cur_hook_thread_id = GetCurrentThreadId();
@@ -143,6 +134,14 @@ where
 #[inline]
 pub fn is_grabbed() -> bool {
     *CUR_HOOK_THREAD_ID.lock().unwrap() != 0
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum Error {
+    #[error("Error disabling hook: {0}")]
+    ExitGrabError(u32),
+    #[error("Error setting hook")]
+    Hook(#[from] HookError),
 }
 
 pub fn grab<T>(callback: T) -> Result<(), GrabError>
@@ -210,10 +209,7 @@ pub fn exit_grab() -> Result<(), GrabError> {
         let mut cur_hook_thread_id = CUR_HOOK_THREAD_ID.lock().unwrap();
         if *cur_hook_thread_id != 0 {
             if FALSE == PostThreadMessageA(*cur_hook_thread_id, WM_USER_EXIT_HOOK, 0, 0) {
-                return Err(GrabError::ExitGrabError(format!(
-                    "Failed to post message to exit hook, {}",
-                    GetLastError()
-                )));
+                return Err(Error::ExitGrabError(GetLastError()).into());
             }
         }
         *cur_hook_thread_id = 0;

@@ -34,9 +34,7 @@ static mut CUR_LOOP: CFRunLoopSourceRef = std::ptr::null_mut();
 
 #[inline]
 pub fn is_grabbed() -> bool {
-    unsafe {
-        !CUR_LOOP.is_null()
-    }
+    unsafe { !CUR_LOOP.is_null() }
 }
 
 pub fn grab<T>(callback: T) -> Result<(), GrabError>
@@ -59,11 +57,11 @@ where
             nil,
         );
         if tap.is_null() {
-            return Err(GrabError::EventTapError);
+            return Err(ListenError::EventTapError.into());
         }
         let _loop = CFMachPortCreateRunLoopSource(nil, tap, 0);
         if _loop.is_null() {
-            return Err(GrabError::LoopSourceError);
+            return Err(ListenError::LoopSourceError.into());
         }
 
         CUR_LOOP = CFRunLoopGetCurrent() as _;

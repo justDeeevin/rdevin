@@ -1,6 +1,6 @@
+use crate::keycodes::windows::key_from_code;
 use crate::rdev::{Button, EventType, Key};
 use crate::windows::keyboard::Keyboard;
-use crate::keycodes::windows::key_from_code;
 use lazy_static::lazy_static;
 use std::convert::TryInto;
 use std::os::raw::{c_int, c_short};
@@ -141,8 +141,11 @@ pub fn vk_to_scancode(vk: u32) -> u32 {
 }
 
 type RawCallback = unsafe extern "system" fn(code: c_int, param: WPARAM, lpdata: LPARAM) -> LRESULT;
+#[derive(Debug, thiserror::Error)]
 pub enum HookError {
+    #[error("Error setting mouse hook: {0}")]
     Mouse(DWORD),
+    #[error("Error setting keyboard hook: {0}")]
     Key(DWORD),
 }
 

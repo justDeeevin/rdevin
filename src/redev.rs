@@ -1,107 +1,45 @@
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use std::time::SystemTime;
-use std::{fmt, fmt::Display};
+use strum::EnumIter; // 0.17.1
+use thiserror::Error;
 
-/// Errors that occur when trying to capture OS events.
-///
-/// <div class="warning">
-/// On Mac, not setting accessibility does not cause an error,
-/// it justs ignores events.
-/// </div>
-#[derive(Debug)]
-#[non_exhaustive]
-pub enum ListenError {
-    /// MacOS
-    EventTapError,
-    /// MacOS
-    LoopSourceError,
-    /// Linux
-    MissingDisplayError,
-    /// Linux
-    KeyboardError,
-    /// Linux
-    RecordContextEnablingError,
-    /// Linux
-    RecordContextError,
-    /// Linux
-    XRecordExtensionError,
-    /// Windows
-    KeyHookError(u32),
-    /// Windows
-    MouseHookError(u32),
-}
+#[cfg(target_os = "linux")]
+use crate::linux::GrabError as _GrabError;
+#[cfg(target_os = "macos")]
+use crate::macos::GrabError as _GrabError;
+#[cfg(target_os = "windows")]
+use crate::windows::GrabError as _GrabError;
 
 /// Errors that occur when trying to grab OS events.
 ///
-/// <div class="warning">
-/// On Mac, not setting accessibility does not cause an error,
-/// it justs ignores events.
-/// </div>
-#[derive(Debug)]
+#[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum GrabError {
-    /// MacOS
-    EventTapError,
-    /// MacOS
-    LoopSourceError,
-    /// Linux
-    MissingDisplayError,
-    /// Linux
-    MissingScreenError,
-    /// Linux
-    InvalidFileDescriptor,
-    /// Linux
-    KeyboardError,
-    /// Windows
-    KeyHookError(u32),
-    /// Windows
-    MouseHookError(u32),
-    /// All
-    SimulateError,
-    /// All
-    ExitGrabError(String),
-    /// All
-    ListenError,
-    /// All
-    IoError(std::io::Error),
+    #[error("OS Error")]
+    System(#[from] _GrabError),
+    #[error("Simulation error")]
+    SimulateError(#[from] SimulateError),
+    #[error("Listening error")]
+    ListenError(#[from] crate::ListenError),
+    #[error("IO error")]
+    IoError(#[from] std::io::Error),
 }
-
-// impl From<std::io::Error> for GrabError {
-//     fn from(err: std::io::Error) -> GrabError {
-//         GrabError::IoError(err)
-//     }
-// }
 
 /// Errors that occur when trying to get display size.
 #[non_exhaustive]
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub enum DisplayError {
+    #[error("No displays")]
     NoDisplay,
-    ConversionError,
-}
-
-impl From<SimulateError> for GrabError {
-    fn from(_: SimulateError) -> GrabError {
-        GrabError::SimulateError
-    }
+    #[error("Error converting display size")]
+    ConversionError(#[from] std::num::TryFromIntError),
 }
 
 /// Marking an error when we tried to simulate and event
-#[derive(Debug)]
+#[derive(Debug, Error)]
+#[error("Could not simulate event")]
 pub struct SimulateError;
-
-impl Display for SimulateError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Could not simulate event")
-    }
-}
-
-impl std::error::Error for SimulateError {}
-
-// Some keys from https://github.com/chromium/chromium/blob/main/ui/events/keycodes/dom/dom_code_data.inc
-
-use strum::EnumIter; // 0.17.1
 
 /// Key names here assume a QWERTY layout. If you want to detect what actual character was created
 /// by a keypress, use [`Event.unicode`](Event::unicode) instead.
@@ -111,6 +49,7 @@ use strum::EnumIter; // 0.17.1
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, EnumIter)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Key {
+    // Some keys from https://github.com/chromium/chromium/blob/main/ui/events/keycodes/dom/dom_code_data.inc
     /// Alt key on Linux and Windows (option key on macOS)
     Alt,
     AltGr,

@@ -1,6 +1,6 @@
 #![allow(improper_ctypes_definitions)]
 use crate::macos::common::*;
-use crate::rdev::{Event, ListenError};
+use crate::rdev::Event;
 use cocoa::base::nil;
 use cocoa::foundation::NSAutoreleasePool;
 use core_graphics::event::{CGEventTapLocation, CGEventType};
@@ -28,6 +28,19 @@ unsafe extern "C" fn raw_callback(
     // println!("Event ref END {:?}", cg_event_ptr);
     // cg_event_ptr
     cg_event
+}
+
+/// Errors that occur when trying to capture OS events.
+///
+/// <div class="warning">
+/// Not setting accessibility does not cause an error, it justs ignores events.
+/// </div>
+#[derive(Debug, thiserror::Error)]
+pub enum ListenError {
+    #[error("Failed to create event tap")]
+    EventTapError,
+    #[error("Failed to create run loop source")]
+    LoopSourceError,
 }
 
 pub fn listen<T>(callback: T) -> Result<(), ListenError>

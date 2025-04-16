@@ -1,6 +1,6 @@
 use crate::redev::UnicodeInfo;
 // This code is awful. Good luck
-use crate::{key_from_code, Event, EventType, GrabError, Keyboard, KeyboardState};
+use crate::{key_from_code, Event, EventType, GrabError, Keyboard, KeyboardState, ListenError};
 use log::error;
 use mio::{unix::SourceFd, Events, Interest, Poll, Token};
 use std::{
@@ -17,6 +17,12 @@ use std::{
 use x11::xlib::{self, GrabModeAsync, KeyPressMask, KeyReleaseMask, Window};
 
 use super::common::KEYBOARD;
+
+#[derive(Debug, thiserror::Error)]
+pub enum Error {
+    #[error("No X11 screen for display")]
+    MissingScreenError,
+}
 
 enum GrabEvent {
     Exit,
@@ -60,13 +66,13 @@ impl KeyboardGrabber {
         };
         grabber.display = unsafe { xlib::XOpenDisplay(ptr::null()) };
         if grabber.display.is_null() {
-            return Err(GrabError::MissingDisplayError);
+            return Err(ListenError::NoDisplays.into());
         }
 
         let screen_number = unsafe { xlib::XDefaultScreen(grabber.display) };
         grabber.screen = unsafe { xlib::XScreenOfDisplay(grabber.display, screen_number) };
         if grabber.screen.is_null() {
-            return Err(GrabError::MissingScreenError);
+            return Err(Error::MissingScreenError.into());
         }
 
         grabber.window = unsafe { xlib::XRootWindowOfScreen(grabber.screen) };
@@ -216,7 +222,7 @@ fn start_grab_service() -> Result<(), GrabError> {
         // KEYBOARD usage is very confusing and error prone.
         KEYBOARD = Keyboard::new();
         if KEYBOARD.is_none() {
-            return Err(GrabError::KeyboardError);
+            return Err(ListenError::NoDisplays.into());
         }
     }
 

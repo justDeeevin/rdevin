@@ -33,8 +33,8 @@
 
 mod redev;
 pub use crate::redev::{
-    Button, DisplayError, Event, EventType, GrabError, Key, KeyCode, KeyboardState, ListenError,
-    RawKey, SimulateError, UnicodeInfo,
+    Button, DisplayError, Event, EventType, GrabError, Key, KeyCode, KeyboardState, RawKey,
+    SimulateError, UnicodeInfo,
 };
 
 /// Different OSes use different numererical representations for keys. Functions within this module
@@ -53,27 +53,27 @@ pub mod codes_conv;
 #[cfg(target_os = "macos")]
 pub use crate::keycodes::macos::{code_from_key, key_from_code};
 #[cfg(target_os = "macos")]
-pub use crate::macos::Keyboard;
-#[cfg(target_os = "macos")]
 use crate::macos::{
     display_size as _display_size, grab as _grab, listen as _listen, simulate as _simulate,
 };
+#[cfg(target_os = "macos")]
+pub use crate::macos::{Keyboard, ListenError};
 
 #[cfg(any(target_os = "android", target_os = "linux"))]
 pub use crate::keycodes::linux::{code_from_key, key_from_code};
 #[cfg(target_os = "linux")]
-pub use crate::linux::Keyboard;
-#[cfg(target_os = "linux")]
 use crate::linux::{display_size as _display_size, listen as _listen, simulate as _simulate};
+#[cfg(target_os = "linux")]
+pub use crate::linux::{Keyboard, ListenError};
 
 #[cfg(target_os = "windows")]
 pub use crate::keycodes::windows::{code_from_key, key_from_code};
 #[cfg(target_os = "windows")]
-pub use crate::windows::Keyboard;
-#[cfg(target_os = "windows")]
 use crate::windows::{
     display_size as _display_size, grab as _grab, listen as _listen, simulate as _simulate,
 };
+#[cfg(target_os = "windows")]
+pub use crate::windows::{Keyboard, ListenError};
 
 /// React to global input events.
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
