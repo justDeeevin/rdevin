@@ -113,8 +113,8 @@ impl Drop for KeyboardGrabber {
 
 #[inline]
 fn is_control(unicode_info: &Option<UnicodeInfo>) -> bool {
-    unicode_info.as_ref().map_or(false, |unicode_info| {
-        unicode_info.name.as_ref().map_or(false, |seq| {
+    unicode_info.as_ref().is_some_and(|unicode_info| {
+        unicode_info.name.as_ref().is_some_and(|seq| {
             for chr in seq.chars() {
                 if chr.is_control() {
                     return true;
@@ -285,13 +285,10 @@ fn loop_poll_x_event(display: Arc<Mutex<u64>>, mut poll: Poll) {
         match poll.poll(&mut events, Some(Duration::from_millis(300))) {
             Ok(_) => {
                 for event in &events {
-                    match event.token() {
-                        GRAB_RECV => {
-                            let lock = display.lock().unwrap();
-                            let display = *lock as *mut xlib::Display;
-                            read_x_event(&mut x_event, display);
-                        }
-                        _ => {}
+                    if event.token() == GRAB_RECV {
+                        let lock = display.lock().unwrap();
+                        let display = *lock as *mut xlib::Display;
+                        read_x_event(&mut x_event, display);
                     }
                 }
             }

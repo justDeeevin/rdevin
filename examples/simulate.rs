@@ -117,11 +117,12 @@ fn test_simulate_char() {
 }
 
 #[cfg(target_os = "linux")]
-fn simulate_combination() {
+fn simulate_combination() -> Result<(), SimulateError> {
     send(&EventType::KeyPress(Key::ControlLeft));
-    redev::linux::simulate_char('€', true);
-    redev::linux::simulate_char('€', false);
+    redev::linux::simulate_char('€', true)?;
+    redev::linux::simulate_char('€', false)?;
     send(&EventType::KeyRelease(Key::ControlLeft));
+    Ok(())
 }
 
 fn test_simulate_dead() {

@@ -8,11 +8,6 @@ use std::ptr::{null, null_mut, NonNull};
 use x11::xlib::{self, KeySym, XKeyEvent, XKeysymToString, XSupportsLocale};
 
 #[derive(Debug)]
-pub struct MyXIM(xlib::XIM);
-unsafe impl Sync for MyXIM {}
-unsafe impl Send for MyXIM {}
-
-#[derive(Debug)]
 pub struct MyXIC(xlib::XIC);
 unsafe impl Sync for MyXIC {}
 unsafe impl Send for MyXIC {}
@@ -24,7 +19,6 @@ unsafe impl Send for MyDisplay {}
 
 #[derive(Debug)]
 pub struct Keyboard {
-    pub xim: Box<MyXIM>,
     pub xic: Box<MyXIC>,
     pub display: Box<MyDisplay>,
     window: Box<xlib::Window>,
@@ -119,7 +113,6 @@ impl Keyboard {
             xlib::XSetICFocus(xic);
 
             Some(Keyboard {
-                xim: Box::new(MyXIM(xim)),
                 xic: Box::new(MyXIC(xic)),
                 display: Box::new(MyDisplay(dpy)),
                 window: Box::new(window),
@@ -227,15 +220,12 @@ impl Keyboard {
 
         // C0 controls
         if len == 1 {
-            match String::from_utf8(buf[..len].to_vec()) {
-                Ok(s) => {
-                    if let Some(c) = s.chars().next() {
-                        if ('\u{1}'..='\u{1f}').contains(&c) {
-                            return None;
-                        }
+            if let Ok(s) = String::from_utf8(buf[..len].to_vec()) {
+                if let Some(c) = s.chars().next() {
+                    if ('\u{1}'..='\u{1f}').contains(&c) {
+                        return None;
                     }
                 }
-                Err(_) => {}
             }
         }
 

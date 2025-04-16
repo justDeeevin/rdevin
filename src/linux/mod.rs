@@ -1,3 +1,5 @@
+#![allow(static_mut_refs)]
+
 // TODO: How TF does any of this work?
 
 extern crate libc;

@@ -1,15 +1,17 @@
+#![allow(static_mut_refs)]
+
 #[cfg(target_os = "linux")]
 use core::time;
 use redev::keycodes::linux::code_from_key;
 #[cfg(target_os = "linux")]
 use redev::{key_from_code, simulate};
 use redev::{Event, EventType, GrabError, Key as RdevKey};
-#[cfg(target_os = "linux")]
-use std::{collections::HashMap, mem::zeroed, os::raw::c_int, ptr, thread, time::SystemTime};
 use std::{
     collections::HashSet,
     sync::{mpsc::Sender, Arc, Mutex},
 };
+#[cfg(target_os = "linux")]
+use std::{mem::zeroed, os::raw::c_int, ptr, thread, time::SystemTime};
 #[cfg(target_os = "linux")]
 use strum::IntoEnumIterator;
 #[cfg(target_os = "linux")]
@@ -155,7 +157,7 @@ fn set_key_hook() {
                         println!("{:?} {:?}", key, is_press);
                     }
                 });
-                handle.join();
+                handle.join().unwrap();
             }
         }
     }

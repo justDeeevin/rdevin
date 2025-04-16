@@ -14,6 +14,7 @@ macro_rules! decl_keycodes {
         }
 
         pub fn key_from_code(code: &str) -> Key {
+            #[allow(unreachable_patterns)]
             match code {
                 $(
                     $code => Key::$key,
@@ -180,7 +181,7 @@ mod test {
             if let Some(code2) = code_from_key(key) {
                 assert_eq!(code, code2)
             } else {
-                assert!(false, "We could not convert back code: {:?}", code);
+                panic!("We could not convert back code: {:?}", code);
             }
         }
     }

@@ -25,8 +25,8 @@
 //!
 //! ## Acknowledgements
 //! - This crate is a fork of a fork of a fork of [Narsil's `rdev`
-//! crate](https://crates.io/crates/rdev), created to ensure continued maintenance and to make
-//! Rustdesk's many useful additions available on crates.io.
+//!   crate](https://crates.io/crates/rdev), created to ensure continued maintenance and to make
+//!   Rustdesk's many useful additions available on crates.io.
 //! - [Enigo](https://github.com/Enigo-rs/Enigo), an input simulation library, served as inspiration and reference for Narsil's original crate.
 //!
 //! [^1]: Not available on Linux
