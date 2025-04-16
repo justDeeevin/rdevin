@@ -23,7 +23,7 @@ widestring = "1.0.2"
 log = "0.4"
 
 [features]
-serialize = ["serde"]
+serde = ["dep:serde"]
 
 [target.'cfg(target_os = "macos")'.dependencies]
 cocoa = "0.24.0"
@@ -53,7 +53,7 @@ tokio = {version = "1.5", features = ["sync", "macros", "rt-multi-thread"]}
 
 [[example]]
 name = "serialize"
-required-features = ["serialize"]
+required-features = ["serde"]
 
 [[example]]
 name = "tokio_channel"

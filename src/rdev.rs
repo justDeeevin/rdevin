@@ -1,4 +1,4 @@
-#[cfg(feature = "serialize")]
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use std::time::SystemTime;
 use std::{fmt, fmt::Display};
@@ -110,7 +110,7 @@ impl std::error::Error for SimulateError {}
 /// get modified if NumLock is Off and ARE pagedown and so on.
 use strum_macros::EnumIter; // 0.17.1
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, EnumIter)]
-#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Key {
     /// Alt key on Linux and Windows (option key on macOS)
     Alt,
@@ -270,7 +270,7 @@ pub type KeyCode = u32;
 pub type KeyCode = crate::CGKeyCode;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, EnumIter)]
-#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum RawKey {
     ScanCode(KeyCode),
     WinVirtualKeycode(KeyCode),
@@ -289,7 +289,7 @@ impl Default for RawKey {
 /// Some mice have more than 3 buttons. These are not defined, and different
 /// OSs will give different `Button::Unknown` values.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Button {
     Left,
     Right,
@@ -300,7 +300,7 @@ pub enum Button {
 /// In order to manage different OSs, the current EventType choices are a mix and
 /// match to account for all possible events.
 #[derive(Debug, Copy, Clone, PartialEq)]
-#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum EventType {
     /// The keys correspond to a standard qwerty layout, they don't correspond
     /// To the actual letter a user would use, that requires some layout logic to be added.
@@ -339,7 +339,7 @@ pub struct UnicodeInfo {
 /// Caveat: Dead keys don't function on Linux(X11) yet. You will receive None for
 /// a dead key, and the raw letter instead of accentuated letter.
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Event {
     pub time: SystemTime,
     pub unicode: Option<UnicodeInfo>,
