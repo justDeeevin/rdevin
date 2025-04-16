@@ -1,4 +1,4 @@
-use rdev::listen;
+use redev::listen;
 use std::sync::mpsc::channel;
 use std::thread;
 

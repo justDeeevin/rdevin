@@ -1,4 +1,4 @@
-use rdev::{EventType, Key, Keyboard, KeyboardState};
+use redev::{EventType, Key, Keyboard, KeyboardState};
 
 fn main() {
     #[cfg(target_os = "windows")]

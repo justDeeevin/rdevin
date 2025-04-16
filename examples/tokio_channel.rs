@@ -1,4 +1,4 @@
-use rdev::listen;
+use redev::listen;
 use std::thread;
 use tokio::sync::mpsc;
 

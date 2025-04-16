@@ -1,17 +1,17 @@
 [package]
 authors = ["Nicolas Patry <patry.nicolas@protonmail.com>"]
 edition = "2018"
-name = "rdev"
-version = "0.5.0-2"
+name = "redev"
+version = "0.1.0"
 
 categories = ["development-tools::testing", "api-bindings", "hardware-support"]
 description = "Listen and send keyboard and mouse events on Windows, Linux and MacOS."
-documentation = "https://docs.rs/rdev/"
-homepage = "https://github.com/Narsil/rdev"
+documentation = "https://docs.rs/redev/"
+homepage = "https://github.com/justdeeevin/redev"
 keywords = ["input", "mouse", "testing", "keyboard", "automation"]
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/Narsil/rdev"
+repository = "https://github.com/justdeeevin/redev"
 
 [dependencies]
 enum-map = "2.4.0"

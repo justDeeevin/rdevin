@@ -1,8 +1,8 @@
 #[cfg(target_os = "linux")]
 use core::time;
 #[cfg(target_os = "linux")]
-use rdev::{key_from_code, linux_keycode_from_key, simulate};
-use rdev::{Event, EventType, GrabError, Key as RdevKey};
+use redev::{key_from_code, linux_keycode_from_key, simulate};
+use redev::{Event, EventType, GrabError, Key as RdevKey};
 #[cfg(target_os = "linux")]
 use std::{collections::HashMap, mem::zeroed, os::raw::c_int, ptr, thread, time::SystemTime};
 use std::{

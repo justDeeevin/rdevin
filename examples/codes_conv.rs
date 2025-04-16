@@ -1,9 +1,9 @@
 #[cfg(target_os = "linux")]
 use core::time::Duration;
-use rdev::Event;
-use rdev::EventType;
+use redev::Event;
+use redev::EventType;
 #[cfg(target_os = "linux")]
-use rdev::{disable_grab, enable_grab, exit_grab_listen, start_grab_listen};
+use redev::{disable_grab, enable_grab, exit_grab_listen, start_grab_listen};
 #[cfg(target_os = "linux")]
 use std::thread;
 
@@ -17,23 +17,23 @@ fn callback(event: Event) -> Option<Event> {
             #[cfg(target_os = "windows")]
             {
                 win_scancode = event.position_code;
-                macos_keycode = rdev::win_scancode_to_macos_code(event.position_code).unwrap_or(0);
-                linux_keycode = rdev::win_scancode_to_linux_code(event.position_code).unwrap_or(0);
+                macos_keycode = redev::win_scancode_to_macos_code(event.position_code).unwrap_or(0);
+                linux_keycode = redev::win_scancode_to_linux_code(event.position_code).unwrap_or(0);
             };
             #[cfg(target_os = "macos")]
             {
                 win_scancode =
-                    rdev::macos_code_to_win_scancode(event.platform_code as _).unwrap_or(0) as _;
+                    redev::macos_code_to_win_scancode(event.platform_code as _).unwrap_or(0) as _;
                 macos_keycode = event.platform_code as _;
                 linux_keycode =
-                    rdev::macos_code_to_linux_code(event.platform_code as _).unwrap_or(0) as _;
+                    redev::macos_code_to_linux_code(event.platform_code as _).unwrap_or(0) as _;
             };
             #[cfg(target_os = "linux")]
             {
                 win_scancode =
-                    rdev::linux_code_to_win_scancode(event.platform_code as _).unwrap_or(0);
+                    redev::linux_code_to_win_scancode(event.platform_code as _).unwrap_or(0);
                 macos_keycode =
-                    rdev::linux_code_to_macos_code(event.platform_code as _).unwrap_or(0);
+                    redev::linux_code_to_macos_code(event.platform_code as _).unwrap_or(0);
                 linux_keycode = event.platform_code as _;
             };
 
@@ -80,7 +80,7 @@ fn main() {
 #[cfg(any(target_os = "windows", target_os = "macos"))]
 fn main() {
     // This will block.
-    if let Err(error) = rdev::grab(callback) {
+    if let Err(error) = redev::grab(callback) {
         println!("Error: {:?}", error)
     }
 }

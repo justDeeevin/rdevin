@@ -1,4 +1,4 @@
-use rdev::display_size;
+use redev::display_size;
 fn main() {
     let (w, h) = display_size().unwrap();
 
