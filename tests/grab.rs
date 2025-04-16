@@ -1,3 +1,5 @@
+#![cfg(not(any(target_os = "android", target_os = "ios", target_os = "linux")))]
+
 use lazy_static::lazy_static;
 use redev::{grab, listen, simulate, Event, EventType, Key};
 use serial_test::serial;
