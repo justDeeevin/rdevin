@@ -4,8 +4,11 @@ use std::time::SystemTime;
 use std::{fmt, fmt::Display};
 
 /// Errors that occur when trying to capture OS events.
-/// Be careful on Mac, not setting accessibility does not cause an error
+///
+/// <div class="warning">
+/// On Mac, not setting accessibility does not cause an error,
 /// it justs ignores events.
+/// </div>
 #[derive(Debug)]
 #[non_exhaustive]
 pub enum ListenError {
@@ -30,12 +33,14 @@ pub enum ListenError {
 }
 
 /// Errors that occur when trying to grab OS events.
-/// Be careful on Mac, not setting accessibility does not cause an error
+///
+/// <div class="warning">
+/// On Mac, not setting accessibility does not cause an error,
 /// it justs ignores events.
+/// </div>
 #[derive(Debug)]
 #[non_exhaustive]
 pub enum GrabError {
-    ListenError,
     /// MacOS
     EventTapError,
     /// MacOS
@@ -44,7 +49,7 @@ pub enum GrabError {
     MissingDisplayError,
     /// Linux
     MissingScreenError,
-    // Linux
+    /// Linux
     InvalidFileDescriptor,
     /// Linux
     KeyboardError,
@@ -56,7 +61,9 @@ pub enum GrabError {
     SimulateError,
     /// All
     ExitGrabError(String),
-
+    /// All
+    ListenError,
+    /// All
     IoError(std::io::Error),
 }
 
@@ -94,15 +101,13 @@ impl std::error::Error for SimulateError {}
 
 // Some keys from https://github.com/chromium/chromium/blob/main/ui/events/keycodes/dom/dom_code_data.inc
 
-/// Key names based on physical location on the device
-/// Merge Option(MacOS) and Alt(Windows, Linux) into Alt
-/// Merge Windows (Windows), Meta(Linux), Command(MacOS) into Meta
-/// Characters based on Qwerty layout, don't use this for characters as it WILL
-/// depend on the layout. Use Event.name instead. Key modifiers gives those keys
-/// a different value too.
-/// Careful, on Windows KpReturn does not exist, it' s strictly equivalent to Return, also Keypad keys
-/// get modified if NumLock is Off and ARE pagedown and so on.
 use strum_macros::EnumIter; // 0.17.1
+
+/// Key names here assume a QWERTY layout. If you want to detect what actual character was created
+/// by a keypress, use [`Event.unicode`](Event::unicode) instead.
+///
+/// **Warning**: on Windows, [`KpReturn`](Key::KpReturn) does not exist; it' s strictly equivalent to [`Return`](Key::Return). Also, keypad keys
+/// get modified if NumLock is off, directly outputting their associated function (e.g. PageDown).
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, EnumIter)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum Key {
@@ -143,9 +148,9 @@ pub enum Key {
     F9,
     Home,
     LeftArrow,
-    /// also known as "windows", "super", and "command"
+    /// Also known as "windows", "super", and "command"
     MetaLeft,
-    /// also known as "windows", "super", and "command"
+    /// Also known as "windows", "super", and "command"
     MetaRight,
     PageDown,
     PageUp,
@@ -255,6 +260,7 @@ pub enum Key {
     Sleep,
     Separator,
     Unknown(u32),
+    // TODO: Under what circumstances does RawKey get sent?
     RawKey(RawKey),
 }
 
@@ -291,27 +297,23 @@ pub enum Button {
     Unknown(u8),
 }
 
-/// In order to manage different OSs, the current EventType choices are a mix and
-/// match to account for all possible events.
+/// The actual input from an input event. Can either be received from the OS or constructed in
+/// code.
+///
+/// "Button" refers to a mouse button.
 #[derive(Debug, Copy, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum EventType {
-    /// The keys correspond to a standard qwerty layout, they don't correspond
-    /// To the actual letter a user would use, that requires some layout logic to be added.
     KeyPress(Key),
     KeyRelease(Key),
-    /// Mouse Button
     ButtonPress(Button),
     ButtonRelease(Button),
-    /// Values in pixels. `EventType::MouseMove{x: 0, y: 0}` corresponds to the
-    /// top left corner, with x increasing downward and y increasing rightward
+    /// Contains the cursor's position in pixels with the origin at the top left of the screen.
     MouseMove {
         x: f64,
         y: f64,
     },
-    /// `delta_y` represents vertical scroll and `delta_x` represents horizontal scroll.
-    /// Positive values correspond to scrolling up or right and negative values
-    /// correspond to scrolling down or left
+    /// Positive delta is up and right.
     Wheel {
         delta_x: i64,
         delta_y: i64,
@@ -320,24 +322,26 @@ pub enum EventType {
 
 /// The Unicode information of input.
 #[derive(Debug, Clone, PartialEq, Default)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct UnicodeInfo {
     pub name: Option<String>,
     pub unicode: Vec<u16>,
     pub is_dead: bool,
 }
 
-/// When events arrive from the OS they get some additional information added from
-/// EventType, which is the time when this event was received, and the name Option
-/// which contains what characters should be emmitted from that event. This relies
-/// on the OS layout and keyboard state machinery.
-/// Caveat: Dead keys don't function on Linux(X11) yet. You will receive None for
-/// a dead key, and the raw letter instead of accentuated letter.
+/// An input event received from the OS.
 #[derive(Debug, Clone, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Event {
+    /// The time at which the event was received.
     pub time: SystemTime,
+    /// For keyboard events, information about the input Unicode character.
     pub unicode: Option<UnicodeInfo>,
+    /// Rust-encoded representation of the input.
+    ///
+    /// Keyboard keys are assumed to be QWERTY layout.
     pub event_type: EventType,
+    // TODO: doc the following fields
     // Linux: keysym
     // WIndows: vkcod
     pub platform_code: u32,
@@ -349,6 +353,7 @@ pub struct Event {
     pub extra_data: i64,
 }
 
+// TODO: doc
 /// We can define a dummy Keyboard, that we will use to detect
 /// what kind of EventType trigger some String. We get the currently used
 /// layout for now !
