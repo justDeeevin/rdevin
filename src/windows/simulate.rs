@@ -1,5 +1,5 @@
-use crate::rdev::{Button, EventType, RawKey, SimulateError};
 use crate::keycodes::windows::{get_win_codes, scancode_from_key};
+use crate::rdev::{Button, EventType, RawKey, SimulateError};
 use crate::Key;
 use std::convert::TryFrom;
 use std::mem::size_of;
@@ -57,7 +57,7 @@ fn sim_mouse_event(flags: DWORD, data: DWORD, dx: LONG, dy: LONG) -> Result<(), 
         )
     };
     if value != 1 {
-        Err(SimulateError)
+        Err(SimulateError::SendInput)
     } else {
         Ok(())
     }
@@ -87,7 +87,7 @@ fn sim_keyboard_event(flags: DWORD, vk: WORD, scan: WORD) -> Result<(), Simulate
         )
     };
     if value != 1 {
-        Err(SimulateError)
+        Err(SimulateError::SendInput)
     } else {
         Ok(())
     }
@@ -109,14 +109,21 @@ fn simulate_key_event_rawkey(key: &RawKey, is_press: bool) -> Result<(), Simulat
                 unsafe { MapVirtualKeyExW(*vk as _, MAPVK_VK_TO_VSC, get_layout()) as _ };
             simulate_code(None, Some(scancode), is_press)
         }
-        _ => Err(SimulateError),
+        RawKey::MacVirtualKeycode(_) => Err(SimulateError::InvalidRawKey {
+            expected: "Windows".into(),
+            got: "Mac".into(),
+        }),
+        RawKey::LinuxXorgKeycode(_) | LinuxConsoleKeycode(_) => Err(SimulateError::InvalidRawKey {
+            expected: "Windows".into(),
+            got: "Linux".into(),
+        }),
     }
 }
 
 fn simulate_key_event_not_rawkey(key: &Key, is_press: bool) -> Result<(), SimulateError> {
     let layout = get_layout();
     let (vk, scan) = {
-        let (code, scancode) = get_win_codes(*key).ok_or(SimulateError)?;
+        let (code, scancode) = get_win_codes(*key).ok_or(SimulateError::GetCodes)?;
         if scancode != 0 {
             (None, Some(scancode))
         } else {
@@ -159,7 +166,7 @@ pub fn simulate(event_type: &EventType) -> Result<(), SimulateError> {
             if *delta_x != 0 {
                 sim_mouse_event(
                     MOUSEEVENTF_HWHEEL,
-                    (c_short::try_from(*delta_x).map_err(|_| SimulateError)? * WHEEL_DELTA) as u32,
+                    (c_short::try_from(*delta_x)? * WHEEL_DELTA) as u32,
                     0,
                     0,
                 )?;
@@ -168,7 +175,7 @@ pub fn simulate(event_type: &EventType) -> Result<(), SimulateError> {
             if *delta_y != 0 {
                 sim_mouse_event(
                     MOUSEEVENTF_WHEEL,
-                    (c_short::try_from(*delta_y).map_err(|_| SimulateError)? * WHEEL_DELTA) as u32,
+                    (c_short::try_from(*delta_y)? * WHEEL_DELTA) as u32,
                     0,
                     0,
                 )?;
@@ -179,7 +186,7 @@ pub fn simulate(event_type: &EventType) -> Result<(), SimulateError> {
             let width = unsafe { GetSystemMetrics(SM_CXVIRTUALSCREEN) };
             let height = unsafe { GetSystemMetrics(SM_CYVIRTUALSCREEN) };
             if width == 0 || height == 0 {
-                return Err(SimulateError);
+                return Err(SimulateError::NoDisplay);
             }
 
             sim_mouse_event(
@@ -210,7 +217,7 @@ pub fn simulate_code(
         scancode = 0;
         flags = 0;
     } else {
-        return Err(SimulateError);
+        return Err(SimulateError::NoCode);
     }
 
     if (scancode >> 8) == 0xE0 || (scancode >> 8) == 0xE1 {
@@ -233,7 +240,7 @@ pub fn simulate_key_unicode(unicode_16: u16, try_unicode: bool) -> Result<(), Si
         if try_unicode {
             simulate_unicode(unicode_16)
         } else {
-            Err(SimulateError)
+            Err(SimulateError::NoCorrespondingKey)
         }
     } else {
         let vk = res & 0x00FF;

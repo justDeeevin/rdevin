@@ -172,7 +172,10 @@ pub fn simulate(event_type: &EventType) -> Result<(), SimulateError> {
             cg_event.post(CGEventTapLocation::HID);
             Ok(())
         } else {
-            Err(SimulateError)
+            Err(SimulateError::InvalidRawKey {
+                expected: "Mac".into(),
+                got: None,
+            })
         }
     }
 }
@@ -196,7 +199,10 @@ impl VirtualInput {
                 cg_event.post(self.tap_loc);
                 Ok(())
             } else {
-                Err(SimulateError)
+                Err(SimulateError::InvalidRawKey {
+                    expected: "Mac".into(),
+                    got: None,
+                })
             }
         }
     }

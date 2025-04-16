@@ -36,10 +36,27 @@ pub enum DisplayError {
     ConversionError(#[from] std::num::TryFromIntError),
 }
 
-/// Marking an error when we tried to simulate and event
+/// Error simulating an event
 #[derive(Debug, Error)]
-#[error("Could not simulate event")]
-pub struct SimulateError;
+pub enum SimulateError {
+    #[error("Failed to send input event to OS")]
+    SendInput,
+    #[error("Invalid RawKey OS; Expected {expected}{}", if let Some(got) = got {format!(", got {got}")} else {"".to_string()})]
+    InvalidRawKey {
+        expected: String,
+        got: Option<String>,
+    },
+    #[error("Failed to get keycodes for Key variant")]
+    GetCodes,
+    #[error("Integer conversion error")]
+    IntConversion(#[from] std::num::TryFromIntError),
+    #[error("No displays")]
+    NoDisplay,
+    #[error("No code given")]
+    NoCode,
+    #[error("No key corresponding to given character")]
+    NoCorrespondingKey,
+}
 
 /// Key names here assume a QWERTY layout. If you want to detect what actual character was created
 /// by a keypress, use [`Event.unicode`](Event::unicode) instead.

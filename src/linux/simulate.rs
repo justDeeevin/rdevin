@@ -6,18 +6,24 @@ use std::ptr::null;
 use x11::xlib;
 use x11::xtest;
 
-unsafe fn send_native(event_type: &EventType, display: *mut xlib::Display) -> Option<()> {
+unsafe fn send_native(
+    event_type: &EventType,
+    display: *mut xlib::Display,
+) -> Result<(), SimulateError> {
     let res = match event_type {
         EventType::KeyPress(key) => match key {
             crate::Key::RawKey(rawkey) => {
                 if let RawKey::LinuxXorgKeycode(keycode) = rawkey {
                     xtest::XTestFakeKeyEvent(display, *keycode as _, TRUE, 0)
                 } else {
-                    return None;
+                    return Err(SimulateError::InvalidRawKey {
+                        expected: "Linux".into(),
+                        got: None,
+                    });
                 }
             }
             _ => {
-                let code = code_from_key(*key)?;
+                let code = code_from_key(*key).ok_or(SimulateError::NoCode)?;
                 xtest::XTestFakeKeyEvent(display, code, TRUE, 0)
             }
         },
@@ -26,11 +32,14 @@ unsafe fn send_native(event_type: &EventType, display: *mut xlib::Display) -> Op
                 if let RawKey::LinuxXorgKeycode(keycode) = rawkey {
                     xtest::XTestFakeKeyEvent(display, *keycode as _, FALSE, 0)
                 } else {
-                    return None;
+                    return Err(SimulateError::InvalidRawKey {
+                        expected: "Linux".into(),
+                        got: None,
+                    });
                 }
             }
             _ => {
-                let code = code_from_key(*key)?;
+                let code = code_from_key(*key).ok_or(SimulateError::NoCode)?;
                 xtest::XTestFakeKeyEvent(display, code, FALSE, 0)
             }
         },
@@ -80,9 +89,9 @@ unsafe fn send_native(event_type: &EventType, display: *mut xlib::Display) -> Op
         }
     };
     if res == 0 {
-        None
+        Err(SimulateError::SendInput)
     } else {
-        Some(())
+        Ok(())
     }
 }
 
@@ -90,18 +99,18 @@ pub fn simulate(event_type: &EventType) -> Result<(), SimulateError> {
     unsafe {
         let dpy = xlib::XOpenDisplay(null());
         if dpy.is_null() {
-            return Err(SimulateError);
+            return Err(SimulateError::NoDisplay);
         }
         match send_native(event_type, dpy) {
-            Some(_) => {
+            Ok(()) => {
                 xlib::XFlush(dpy);
                 xlib::XSync(dpy, 0);
                 xlib::XCloseDisplay(dpy);
                 Ok(())
             }
-            None => {
+            Err(e) => {
                 xlib::XCloseDisplay(dpy);
-                Err(SimulateError)
+                Err(e)
             }
         }
     }
@@ -139,7 +148,7 @@ pub fn simulate_char(chr: char, pressed: bool) -> Result<(), SimulateError> {
     unsafe {
         let dpy = xlib::XOpenDisplay(null());
         if dpy.is_null() {
-            return Err(SimulateError);
+            return Err(SimulateError::NoDisplay);
         }
         match send_native_char(chr, pressed, dpy) {
             Some(_) => {
@@ -150,12 +159,13 @@ pub fn simulate_char(chr: char, pressed: bool) -> Result<(), SimulateError> {
             }
             None => {
                 xlib::XCloseDisplay(dpy);
-                Err(SimulateError)
+                Err(SimulateError::SendInput)
             }
         }
     }
 }
 
+// TODO: wtf
 pub fn simulate_unicode(_unicode: u16) -> Result<(), SimulateError> {
-    Err(SimulateError)
+    Err(SimulateError::SendInput)
 }
