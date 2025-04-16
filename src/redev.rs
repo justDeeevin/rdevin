@@ -101,7 +101,7 @@ impl std::error::Error for SimulateError {}
 
 // Some keys from https://github.com/chromium/chromium/blob/main/ui/events/keycodes/dom/dom_code_data.inc
 
-use strum_macros::EnumIter; // 0.17.1
+use strum::EnumIter; // 0.17.1
 
 /// Key names here assume a QWERTY layout. If you want to detect what actual character was created
 /// by a keypress, use [`Event.unicode`](Event::unicode) instead.
@@ -285,7 +285,8 @@ impl Default for RawKey {
     }
 }
 
-/// Standard mouse buttons
+/// Standard mouse buttons.
+///
 /// Some mice have more than 3 buttons. These are not defined, and different
 /// OSs will give different `Button::Unknown` values.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
