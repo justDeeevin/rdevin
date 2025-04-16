@@ -1,4 +1,4 @@
-use crate::rdev::Key;
+use crate::redev::Key;
 
 pub const RESERVED_UNKNOWN_CODE: u32 = 0;
 
