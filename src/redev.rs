@@ -3,12 +3,6 @@ use serde::{Deserialize, Serialize};
 use std::time::SystemTime;
 use std::{fmt, fmt::Display};
 
-// /// Callback type to send to listen function.
-// pub type Callback = dyn FnMut(Event) -> ();
-
-/// Callback type to send to grab function.
-pub type GrabCallback = fn(event: Event) -> Option<Event>;
-
 /// Errors that occur when trying to capture OS events.
 /// Be careful on Mac, not setting accessibility does not cause an error
 /// it justs ignores events.
