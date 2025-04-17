@@ -25,7 +25,15 @@
     {
       devShells.${system}.default = pkgs.mkShell {
         buildInputs = [
-          (pkgs.rust-bin.selectLatestNightlyWith (toolchain: toolchain.default))
+          (pkgs.rust-bin.selectLatestNightlyWith (
+            toolchain:
+            toolchain.default.override {
+              targets = [
+                "x86_64-pc-windows-gnu"
+                "x86_64-unknown-linux-gnu"
+              ];
+            }
+          ))
         ] ++ runtimeLibs;
         nativeBuildInputs = [ pkgs.pkg-config ];
 

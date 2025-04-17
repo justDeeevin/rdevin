@@ -1,3 +1,5 @@
+#![allow(static_mut_refs)]
+
 extern crate winapi;
 
 mod common;

@@ -338,7 +338,7 @@ impl KeyboardState for Keyboard {
                     None
                 }
                 key => {
-                    let (code, scan_code) = crate::get_win_codes(*key)?;
+                    let (code, scan_code) = crate::keycodes::windows::get_win_codes(*key)?;
 
                     unsafe {
                         let _control = GetKeyState(winuser::VK_CONTROL) & 0x8000_u16 as i16;

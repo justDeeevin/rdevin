@@ -2,7 +2,7 @@ use crate::{
     redev::{Event, EventType, GrabError},
     windows::common::{convert, get_scan_code, HookError, KEYBOARD},
 };
-use std::{io::Error, ptr::null_mut, sync::Mutex, time::SystemTime};
+use std::{io::Error as IoError, ptr::null_mut, sync::Mutex, time::SystemTime};
 use winapi::{
     shared::{
         basetsd::ULONG_PTR,
@@ -112,7 +112,7 @@ where
         hook_keyboard =
             SetWindowsHookExA(WH_KEYBOARD_LL, Some(raw_callback_keyboard), null_mut(), 0);
         if hook_keyboard.is_null() {
-            return Err(Error::KeyHookError(GetLastError())).into();
+            return Err(HookError::Key(GetLastError()).into());
         }
 
         if !crate::keyboard_only() {
@@ -120,9 +120,9 @@ where
             if hook_mouse.is_null() {
                 if FALSE == UnhookWindowsHookEx(hook_keyboard) {
                     // Fatal error
-                    log::error!("UnhookWindowsHookEx keyboard {}", Error::last_os_error());
+                    log::error!("UnhookWindowsHookEx keyboard {}", IoError::last_os_error());
                 }
-                return Err(Error::MouseHookError(GetLastError()).into());
+                return Err(HookError::Mouse(GetLastError()).into());
             }
         }
         *cur_hook_thread_id = GetCurrentThreadId();
@@ -175,7 +175,7 @@ where
                     if FALSE == UnhookWindowsHookEx(hook_keyboard as _) {
                         log::error!(
                             "Failed UnhookWindowsHookEx keyboard {}",
-                            Error::last_os_error()
+                            IoError::last_os_error()
                         );
                         continue;
                     }
@@ -186,7 +186,7 @@ where
                     if FALSE == UnhookWindowsHookEx(hook_mouse as _) {
                         log::error!(
                             "Failed UnhookWindowsHookEx mouse {}",
-                            Error::last_os_error()
+                            IoError::last_os_error()
                         );
                         continue;
                     }

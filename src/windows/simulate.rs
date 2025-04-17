@@ -111,12 +111,14 @@ fn simulate_key_event_rawkey(key: &RawKey, is_press: bool) -> Result<(), Simulat
         }
         RawKey::MacVirtualKeycode(_) => Err(SimulateError::InvalidRawKey {
             expected: "Windows".into(),
-            got: "Mac".into(),
+            got: Some("Mac".into()),
         }),
-        RawKey::LinuxXorgKeycode(_) | LinuxConsoleKeycode(_) => Err(SimulateError::InvalidRawKey {
-            expected: "Windows".into(),
-            got: "Linux".into(),
-        }),
+        RawKey::LinuxXorgKeycode(_) | RawKey::LinuxConsoleKeycode(_) => {
+            Err(SimulateError::InvalidRawKey {
+                expected: "Windows".into(),
+                got: Some("Linux".into()),
+            })
+        }
     }
 }
 
