@@ -1,4 +1,4 @@
-use crate::rdev::DisplayError;
+use crate::redev::DisplayError;
 use std::convert::TryInto;
 use winapi::um::winuser::{GetSystemMetrics, SM_CXSCREEN, SM_CYSCREEN};
 

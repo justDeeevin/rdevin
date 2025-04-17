@@ -1,5 +1,5 @@
 use crate::{
-    rdev::{Event, EventType, GrabError},
+    redev::{Event, EventType, GrabError},
     windows::common::{convert, get_scan_code, HookError, KEYBOARD},
 };
 use std::{io::Error, ptr::null_mut, sync::Mutex, time::SystemTime};

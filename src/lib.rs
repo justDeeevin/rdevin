@@ -89,7 +89,7 @@ where
 /// # Example
 ///
 /// ```no_run
-/// use rdev::{simulate, Button, EventType, Key};
+/// use redev::{simulate, Button, EventType, Key};
 ///
 /// simulate(&EventType::KeyPress(Key::KeyS));
 /// simulate(&EventType::KeyRelease(Key::KeyS));
@@ -123,7 +123,7 @@ pub fn display_size() -> Result<(u64, u64), DisplayError> {
 /// # Example
 ///
 /// ```no_run
-/// use rdev::{grab, Event, EventType, Key};
+/// use redev::{grab, Event, EventType, Key};
 ///
 /// fn callback(event: Event) -> Option<Event> {
 ///     println!("My callback {:?}", event);
