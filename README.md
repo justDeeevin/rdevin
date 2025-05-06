@@ -5,6 +5,9 @@
 
 Cross-platform simulation and global listening for keyboard and mouse input.
 
+> [!WARNING]
+> This crate is subject to extreme change. There is still great room for improvement. It is only presently published for use by [NuhxBoard](https://github.com/justdeeevin/nuhxboard).
+
 ## Listening for input
 
 The `listen` and `grab` [^1] functions can be used to run a callback for all input events.
