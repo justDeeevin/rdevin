@@ -19,27 +19,19 @@ const VK_LSHIFT_: usize = VK_LSHIFT as usize;
 const VK_RSHIFT_: usize = VK_RSHIFT as usize;
 const HIGHBIT: u8 = 0x80;
 
+#[derive(better_default::Default)]
 pub struct Keyboard {
     last_code: UINT,
     last_scan_code: UINT,
+    #[default([0; 256])]
     last_state: [BYTE; 256],
     modifiers: HashMap<c_int, bool>,
     last_is_dead: bool,
+    #[default(true)]
     event_popup: bool,
 }
 
 impl Keyboard {
-    pub fn new() -> Keyboard {
-        Keyboard {
-            last_code: 0,
-            last_scan_code: 0,
-            last_state: [0; 256],
-            modifiers: HashMap::new(),
-            last_is_dead: false,
-            event_popup: true,
-        }
-    }
-
     pub(crate) fn get_modifier(&self, key: Key) -> bool {
         match key {
             Key::ShiftLeft => *self.modifiers.get(&VK_LSHIFT).unwrap_or(&false),

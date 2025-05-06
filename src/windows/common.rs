@@ -25,7 +25,7 @@ pub const FALSE: i32 = 0;
 pub static mut KEYBOARD_HOOK: HHOOK = null_mut();
 pub static mut MOUSE_HOOK: HHOOK = null_mut();
 lazy_static! {
-    pub(crate) static ref KEYBOARD: Mutex<Keyboard> = Mutex::new(Keyboard::new());
+    pub(crate) static ref KEYBOARD: Mutex<Keyboard> = Mutex::new(Keyboard::default());
 }
 
 pub fn set_modifier(key: Key, down: bool) {

@@ -45,6 +45,7 @@ winapi = { version = "0.3", features = [
   "errhandlingapi",
   "processthreadsapi",
 ] }
+better_default = "1.0.5"
 
 [dev-dependencies]
 serde_json = "1.0"

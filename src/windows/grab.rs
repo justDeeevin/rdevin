@@ -182,15 +182,12 @@ where
                     hook_keyboard = null_mut();
                 }
 
-                if !hook_mouse.is_null() {
-                    if FALSE == UnhookWindowsHookEx(hook_mouse as _) {
-                        log::error!(
-                            "Failed UnhookWindowsHookEx mouse {}",
-                            IoError::last_os_error()
-                        );
-                        continue;
-                    }
-                    // hook_mouse = null_mut();
+                if !hook_mouse.is_null() && FALSE == UnhookWindowsHookEx(hook_mouse as _) {
+                    log::error!(
+                        "Failed UnhookWindowsHookEx mouse {}",
+                        IoError::last_os_error()
+                    );
+                    continue;
                 }
                 break;
             }
@@ -207,10 +204,10 @@ where
 pub fn exit_grab() -> Result<(), GrabError> {
     unsafe {
         let mut cur_hook_thread_id = CUR_HOOK_THREAD_ID.lock().unwrap();
-        if *cur_hook_thread_id != 0 {
-            if FALSE == PostThreadMessageA(*cur_hook_thread_id, WM_USER_EXIT_HOOK, 0, 0) {
-                return Err(Error::ExitGrabError(GetLastError()).into());
-            }
+        if *cur_hook_thread_id != 0
+            && FALSE == PostThreadMessageA(*cur_hook_thread_id, WM_USER_EXIT_HOOK, 0, 0)
+        {
+            return Err(Error::ExitGrabError(GetLastError()).into());
         }
         *cur_hook_thread_id = 0;
     }

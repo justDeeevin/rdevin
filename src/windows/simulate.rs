@@ -253,9 +253,9 @@ pub fn simulate_key_unicode(unicode_16: u16, try_unicode: bool) -> Result<(), Si
             scancode_from_key(Key::Alt).unwrap_or(0x38),
         ];
         let mod_len = modifiers_scancode.len();
-        for pos in 0..mod_len {
+        for (pos, modifier) in modifiers_scancode.iter().enumerate() {
             if flag & (0x0001 << pos) != 0 {
-                let _ = simulate_code(None, Some(modifiers_scancode[pos]), true);
+                let _ = simulate_code(None, Some(*modifier), true);
             }
         }
         let scan = unsafe { MapVirtualKeyExW(vk as _, MAPVK_VK_TO_VSC, layout) as _ };
