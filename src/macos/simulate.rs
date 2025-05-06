@@ -90,7 +90,7 @@ unsafe fn convert_native_with_source(
             crate::Key::RawKey(rawkey) => {
                 if let RawKey::MacVirtualKeycode(keycode) = rawkey {
                     CGEvent::new_keyboard_event(source, *keycode as _, false)
-                        .and_then(|event| Ok(workaround_fn(event, *keycode)))
+                        .map(|event| workaround_fn(event, *keycode))
                         .ok()
                 } else {
                     None
@@ -99,7 +99,7 @@ unsafe fn convert_native_with_source(
             _ => {
                 let code = code_from_key(*key)?;
                 CGEvent::new_keyboard_event(source, code as _, false)
-                    .and_then(|event| Ok(workaround_fn(event, code as _)))
+                    .map(|event| workaround_fn(event, code as _))
                     .ok()
             }
         },
@@ -185,10 +185,17 @@ pub struct VirtualInput {
     tap_loc: CGEventTapLocation,
 }
 
+#[derive(Debug, thiserror::Error)]
+#[error("Failed to create event source")]
+pub struct EventSourceError;
+
 impl VirtualInput {
-    pub fn new(state_id: CGEventSourceStateID, tap_loc: CGEventTapLocation) -> Result<Self, ()> {
+    pub fn new(
+        state_id: CGEventSourceStateID,
+        tap_loc: CGEventTapLocation,
+    ) -> Result<Self, EventSourceError> {
         Ok(Self {
-            source: CGEventSource::new(state_id)?,
+            source: CGEventSource::new(state_id).map_err(|_| EventSourceError)?,
             tap_loc,
         })
     }

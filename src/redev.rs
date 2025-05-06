@@ -220,10 +220,7 @@ pub enum Key {
     RawKey(RawKey),
 }
 
-#[cfg(not(target_os = "macos"))]
-pub type KeyCode = u32;
-#[cfg(target_os = "macos")]
-pub type KeyCode = crate::CGKeyCode;
+pub type KeyCode = crate::keycodes::macos_virtual_keycodes::CGKeyCode;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, EnumIter)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]

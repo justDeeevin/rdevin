@@ -1,3 +1,5 @@
+#![allow(static_mut_refs)]
+
 mod common;
 mod display;
 mod grab;
@@ -14,4 +16,4 @@ pub use crate::macos::simulate::{
     set_keyboard_extra_info, set_mouse_extra_info, simulate, VirtualInput,
 };
 
-pub type GrabError = ();
+pub type GrabError = std::convert::Infallible;

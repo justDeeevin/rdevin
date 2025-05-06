@@ -1,4 +1,5 @@
 #![allow(improper_ctypes_definitions)]
+use super::listen::ListenError;
 use crate::macos::common::*;
 use crate::redev::{Event, GrabError};
 use cocoa::base::nil;

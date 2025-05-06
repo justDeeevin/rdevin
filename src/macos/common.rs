@@ -108,6 +108,7 @@ extern "C" {
     pub fn KBGetLayoutType(iKeyboardType: SInt16) -> PhysicalKeyboardLayoutType;
 }
 
+#[allow(improper_ctypes_definitions)]
 pub type QCallback = unsafe extern "C" fn(
     proxy: CGEventTapProxy,
     _type: CGEventType,
@@ -209,19 +210,15 @@ pub unsafe fn convert(
                 let code =
                     cg_event.get_integer_value_field(EventField::KEYBOARD_EVENT_KEYCODE) as u32;
                 #[allow(non_upper_case_globals)]
-                let skip_unicode = match code as CGKeyCode {
-                    kVK_Shift | kVK_RightShift | kVK_ForwardDelete => true,
-                    _ => false,
-                };
+                let skip_unicode = matches!(
+                    code as CGKeyCode,
+                    kVK_Shift | kVK_RightShift | kVK_ForwardDelete
+                );
                 if skip_unicode {
                     None
                 } else {
                     let flags = cg_event.get_flags();
-                    let s = keyboard_state.create_unicode_for_key(code, flags);
-                    // if s.is_none() {
-                    //     s = Some(key_to_name(_k).to_owned())
-                    // }
-                    s
+                    keyboard_state.create_unicode_for_key(code, flags)
                 }
             }
             EventType::KeyRelease(..) => None,
