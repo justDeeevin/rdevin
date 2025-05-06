@@ -1,5 +1,6 @@
 //! Cross-platform simulation and global listening for keyboard and mouse input.
 //!
+//! <div class="warning">This crate is subject to extreme change. There is still great room for improvement. It is only presently published for use by <a href="https://github.com/justdeeevin/nuhxboard">NuhxBoard</a>.</div>
 //!
 //! ## Listening for input
 //!
