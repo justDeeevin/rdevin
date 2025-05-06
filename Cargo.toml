@@ -1,5 +1,8 @@
 [package]
-authors = ["Nicolas Patry <patry.nicolas@protonmail.com>"]
+authors = [
+  "Nicolas Patry <patry.nicolas@protonmail.com>",
+  "Devin Droddy <devin.droddy@gmail.com>",
+]
 edition = "2018"
 name = "redev"
 version = "0.1.0"
