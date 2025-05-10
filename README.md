@@ -1,7 +1,7 @@
-# redev
+# rdevin
 
-[![Crate](https://img.shields.io/crates/v/redev.svg)](https://crates.io/crates/redev)
-[![API](https://docs.rs/redev/badge.svg)](https://docs.rs/redev)
+[![Crate](https://img.shields.io/crates/v/rdevin.svg)](https://crates.io/crates/rdevin)
+[![API](https://docs.rs/rdevin/badge.svg)](https://docs.rs/rdevin)
 
 Cross-platform simulation and global listening for keyboard and mouse input.
 
@@ -13,7 +13,7 @@ Cross-platform simulation and global listening for keyboard and mouse input.
 The `listen` and `grab` [^1] functions can be used to run a callback for all input events.
 
 ```rust
-redev::listen(|e| dbg!(e))?;
+rdevin::listen(|e| dbg!(e))?;
 ```
 
 ## Simulating input
@@ -21,7 +21,7 @@ redev::listen(|e| dbg!(e))?;
 The `simulate` function can be used to send input events.
 
 ```rust
-use redev::{simulate, EventType, Key};
+use rdevin::{simulate, EventType, Key};
 
 simulate(&EventType::KeyPress(Key::KeyS))?;
 ```

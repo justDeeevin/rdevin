@@ -1,4 +1,4 @@
-use crate::redev::{EventType, Key, KeyboardState, UnicodeInfo};
+use crate::rdevin::{EventType, Key, KeyboardState, UnicodeInfo};
 use crate::windows::common::{get_code, get_scan_code, FALSE, TRUE};
 use std::collections::HashMap;
 use std::ptr::null_mut;

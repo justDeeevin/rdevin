@@ -1,4 +1,4 @@
-use redev::{Event, EventType, Key, UnicodeInfo};
+use rdevin::{Event, EventType, Key, UnicodeInfo};
 use std::time::SystemTime;
 
 fn main() {

@@ -1,7 +1,7 @@
 #![allow(improper_ctypes_definitions)]
 use super::listen::ListenError;
 use crate::macos::common::*;
-use crate::redev::{Event, GrabError};
+use crate::rdevin::{Event, GrabError};
 use cocoa::base::nil;
 use cocoa::foundation::NSAutoreleasePool;
 use core_graphics::event::{CGEventTapLocation, CGEventType};

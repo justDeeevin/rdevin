@@ -1,7 +1,7 @@
 #![cfg(not(any(target_os = "android", target_os = "ios", target_os = "linux")))]
 
 use lazy_static::lazy_static;
-use redev::{grab, listen, simulate, Event, EventType, Key};
+use rdevin::{grab, listen, simulate, Event, EventType, Key};
 use serial_test::serial;
 use std::error::Error;
 use std::sync::mpsc::{channel, Receiver, RecvTimeoutError, Sender};

@@ -1,4 +1,4 @@
-use redev::{simulate, EventType, Key, SimulateError};
+use rdevin::{simulate, EventType, Key, SimulateError};
 use std::{thread, time};
 
 fn send(event_type: &EventType) {
@@ -15,87 +15,87 @@ fn send(event_type: &EventType) {
 
 #[cfg(target_os = "macos")]
 fn test_macos_keys() {
-    let virtual_input = redev::VirtualInput::new(
-        redev::CGEventSourceStateID::Private,
-        redev::CGEventTapLocation::Session,
+    let virtual_input = rdevin::VirtualInput::new(
+        rdevin::CGEventSourceStateID::Private,
+        rdevin::CGEventTapLocation::Session,
     )
     .unwrap();
 
-    let key_caps = redev::Key::RawKey(redev::RawKey::MacVirtualKeycode(redev::kVK_CapsLock));
-    let key_ansi_a = redev::Key::RawKey(redev::RawKey::MacVirtualKeycode(redev::kVK_ANSI_A));
+    let key_caps = rdevin::Key::RawKey(rdevin::RawKey::MacVirtualKeycode(rdevin::kVK_CapsLock));
+    let key_ansi_a = rdevin::Key::RawKey(rdevin::RawKey::MacVirtualKeycode(rdevin::kVK_ANSI_A));
     {
         println!(
             "caps lock satte 1 {}",
-            redev::VirtualInput::get_key_state(
-                redev::CGEventSourceStateID::CombinedSessionState,
-                redev::kVK_CapsLock
+            rdevin::VirtualInput::get_key_state(
+                rdevin::CGEventSourceStateID::CombinedSessionState,
+                rdevin::kVK_CapsLock
             )
         );
 
         virtual_input
-            .simulate(&redev::EventType::KeyPress(key_caps))
+            .simulate(&rdevin::EventType::KeyPress(key_caps))
             .unwrap();
         thread::sleep(time::Duration::from_millis(20));
 
         println!(
             "caps lock satte 2 {}",
-            redev::VirtualInput::get_key_state(
-                redev::CGEventSourceStateID::CombinedSessionState,
-                redev::kVK_CapsLock
+            rdevin::VirtualInput::get_key_state(
+                rdevin::CGEventSourceStateID::CombinedSessionState,
+                rdevin::kVK_CapsLock
             )
         );
 
         virtual_input
-            .simulate(&redev::EventType::KeyPress(key_ansi_a))
+            .simulate(&rdevin::EventType::KeyPress(key_ansi_a))
             .unwrap();
         thread::sleep(time::Duration::from_millis(20));
         virtual_input
-            .simulate(&redev::EventType::KeyRelease(key_ansi_a))
+            .simulate(&rdevin::EventType::KeyRelease(key_ansi_a))
             .unwrap();
         thread::sleep(time::Duration::from_millis(20));
 
         virtual_input
-            .simulate(&redev::EventType::KeyRelease(key_caps))
+            .simulate(&rdevin::EventType::KeyRelease(key_caps))
             .unwrap();
         thread::sleep(time::Duration::from_millis(20));
 
         println!(
             "caps lock satte 3 {}",
-            redev::VirtualInput::get_key_state(
-                redev::CGEventSourceStateID::CombinedSessionState,
-                redev::kVK_CapsLock
+            rdevin::VirtualInput::get_key_state(
+                rdevin::CGEventSourceStateID::CombinedSessionState,
+                rdevin::kVK_CapsLock
             )
         );
     }
 
-    let command_tab = redev::Key::RawKey(redev::RawKey::MacVirtualKeycode(redev::kVK_Command));
-    let key_tab = redev::Key::RawKey(redev::RawKey::MacVirtualKeycode(redev::kVK_CapsLock));
+    let command_tab = rdevin::Key::RawKey(rdevin::RawKey::MacVirtualKeycode(rdevin::kVK_Command));
+    let key_tab = rdevin::Key::RawKey(rdevin::RawKey::MacVirtualKeycode(rdevin::kVK_CapsLock));
     {
         virtual_input
-            .simulate(&redev::EventType::KeyPress(command_tab))
+            .simulate(&rdevin::EventType::KeyPress(command_tab))
             .unwrap();
         thread::sleep(time::Duration::from_millis(200));
 
         virtual_input
-            .simulate(&redev::EventType::KeyPress(key_tab))
+            .simulate(&rdevin::EventType::KeyPress(key_tab))
             .unwrap();
         thread::sleep(time::Duration::from_millis(200));
         virtual_input
-            .simulate(&redev::EventType::KeyRelease(key_tab))
-            .unwrap();
-        thread::sleep(time::Duration::from_millis(200));
-
-        virtual_input
-            .simulate(&redev::EventType::KeyPress(key_tab))
-            .unwrap();
-        thread::sleep(time::Duration::from_millis(200));
-        virtual_input
-            .simulate(&redev::EventType::KeyRelease(key_tab))
+            .simulate(&rdevin::EventType::KeyRelease(key_tab))
             .unwrap();
         thread::sleep(time::Duration::from_millis(200));
 
         virtual_input
-            .simulate(&redev::EventType::KeyRelease(command_tab))
+            .simulate(&rdevin::EventType::KeyPress(key_tab))
+            .unwrap();
+        thread::sleep(time::Duration::from_millis(200));
+        virtual_input
+            .simulate(&rdevin::EventType::KeyRelease(key_tab))
+            .unwrap();
+        thread::sleep(time::Duration::from_millis(200));
+
+        virtual_input
+            .simulate(&rdevin::EventType::KeyRelease(command_tab))
             .unwrap();
         thread::sleep(time::Duration::from_millis(200));
     }
@@ -103,24 +103,24 @@ fn test_macos_keys() {
 
 #[cfg(windows)]
 fn test_simulate_vk() {
-    let _ = redev::simulate_code(Some(0xA2), None, true);
-    let _ = redev::simulate_code(Some(0x4F), None, true);
-    let _ = redev::simulate_code(Some(0x4F), None, false);
-    let _ = redev::simulate_code(Some(0xA2), None, false);
+    let _ = rdevin::simulate_code(Some(0xA2), None, true);
+    let _ = rdevin::simulate_code(Some(0x4F), None, true);
+    let _ = rdevin::simulate_code(Some(0x4F), None, false);
+    let _ = rdevin::simulate_code(Some(0xA2), None, false);
 }
 
 #[cfg(windows)]
 fn test_simulate_char() {
-    println!("{:?}", redev::simulate_char('A', false));
-    println!("{:?}", redev::simulate_char('€', false));
-    println!("{:?}", redev::simulate_char('€', true));
+    println!("{:?}", rdevin::simulate_char('A', false));
+    println!("{:?}", rdevin::simulate_char('€', false));
+    println!("{:?}", rdevin::simulate_char('€', true));
 }
 
 #[cfg(target_os = "linux")]
 fn simulate_combination() -> Result<(), SimulateError> {
     send(&EventType::KeyPress(Key::ControlLeft));
-    redev::linux::simulate_char('€', true)?;
-    redev::linux::simulate_char('€', false)?;
+    rdevin::linux::simulate_char('€', true)?;
+    rdevin::linux::simulate_char('€', false)?;
     send(&EventType::KeyRelease(Key::ControlLeft));
     Ok(())
 }

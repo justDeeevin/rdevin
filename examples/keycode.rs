@@ -1,4 +1,4 @@
 fn main() {
-    let keycode = redev::keycodes::linux::code_from_key(redev::Key::Num1);
+    let keycode = rdevin::keycodes::linux::code_from_key(rdevin::Key::Num1);
     dbg!(keycode);
 }

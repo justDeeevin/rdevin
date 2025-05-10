@@ -1,9 +1,9 @@
 #[cfg(target_os = "linux")]
 use core::time::Duration;
 #[cfg(target_os = "linux")]
-use redev::linux::{disable_grab, enable_grab, exit_grab_listen, start_grab_listen};
-use redev::Event;
-use redev::EventType;
+use rdevin::linux::{disable_grab, enable_grab, exit_grab_listen, start_grab_listen};
+use rdevin::Event;
+use rdevin::EventType;
 #[cfg(target_os = "linux")]
 use std::thread;
 
@@ -17,24 +17,26 @@ fn callback(event: Event) -> Option<Event> {
             #[cfg(target_os = "windows")]
             {
                 win_scancode = event.position_code;
-                macos_keycode = redev::win_scancode_to_macos_code(event.position_code).unwrap_or(0);
-                linux_keycode = redev::win_scancode_to_linux_code(event.position_code).unwrap_or(0);
+                macos_keycode =
+                    rdevin::win_scancode_to_macos_code(event.position_code).unwrap_or(0);
+                linux_keycode =
+                    rdevin::win_scancode_to_linux_code(event.position_code).unwrap_or(0);
             };
             #[cfg(target_os = "macos")]
             {
                 win_scancode =
-                    redev::macos_code_to_win_scancode(event.platform_code as _).unwrap_or(0) as _;
+                    rdevin::macos_code_to_win_scancode(event.platform_code as _).unwrap_or(0) as _;
                 macos_keycode = event.platform_code as _;
                 linux_keycode =
-                    redev::macos_code_to_linux_code(event.platform_code as _).unwrap_or(0) as _;
+                    rdevin::macos_code_to_linux_code(event.platform_code as _).unwrap_or(0) as _;
             };
             #[cfg(target_os = "linux")]
             {
                 win_scancode =
-                    redev::codes_conv::linux_code_to_win_scancode(event.platform_code as _)
+                    rdevin::codes_conv::linux_code_to_win_scancode(event.platform_code as _)
                         .unwrap_or(0);
                 macos_keycode =
-                    redev::codes_conv::linux_code_to_macos_code(event.platform_code as _)
+                    rdevin::codes_conv::linux_code_to_macos_code(event.platform_code as _)
                         .unwrap_or(0);
                 linux_keycode = event.platform_code as _;
             };
@@ -82,7 +84,7 @@ fn main() {
 #[cfg(any(target_os = "windows", target_os = "macos"))]
 fn main() {
     // This will block.
-    if let Err(error) = redev::grab(callback) {
+    if let Err(error) = rdevin::grab(callback) {
         println!("Error: {:?}", error)
     }
 }

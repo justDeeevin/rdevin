@@ -1,9 +1,9 @@
 #[cfg(target_os = "linux")]
 use core::time::Duration;
 #[cfg(target_os = "linux")]
-use redev::linux::{disable_grab, enable_grab, exit_grab_listen, start_grab_listen};
-use redev::Event;
-use redev::EventType;
+use rdevin::linux::{disable_grab, enable_grab, exit_grab_listen, start_grab_listen};
+use rdevin::Event;
+use rdevin::EventType;
 #[cfg(target_os = "linux")]
 use std::thread;
 
@@ -49,7 +49,7 @@ fn main() {
 #[cfg(any(target_os = "windows", target_os = "macos"))]
 fn main() {
     // This will block.
-    if let Err(error) = redev::grab(callback) {
+    if let Err(error) = rdevin::grab(callback) {
         println!("Error: {:?}", error)
     }
 }

@@ -1,6 +1,6 @@
 use crate::keycodes::macos::{code_from_key, virtual_keycodes::*};
 use crate::macos::common::CGEventSourceKeyState;
-use crate::redev::{Button, EventType, RawKey, SimulateError};
+use crate::rdevin::{Button, EventType, RawKey, SimulateError};
 use core_graphics::{
     event::{
         CGEvent, CGEventFlags, CGEventTapLocation, CGEventType, CGKeyCode, CGMouseButton,
@@ -214,7 +214,7 @@ impl VirtualInput {
         }
     }
 
-    // keycode is defined in redev::macos::virtual_keycodes
+    // keycode is defined in rdevin::macos::virtual_keycodes
     pub fn get_key_state(state_id: CGEventSourceStateID, keycode: CGKeyCode) -> bool {
         unsafe { CGEventSourceKeyState(state_id, keycode) }
     }

@@ -2,10 +2,10 @@
 
 #[cfg(target_os = "linux")]
 use core::time;
-use redev::keycodes::linux::code_from_key;
+use rdevin::keycodes::linux::code_from_key;
 #[cfg(target_os = "linux")]
-use redev::{key_from_code, simulate};
-use redev::{Event, EventType, GrabError, Key as RdevKey};
+use rdevin::{key_from_code, simulate};
+use rdevin::{Event, EventType, GrabError, Key as RdevKey};
 use std::{
     collections::HashSet,
     sync::{mpsc::Sender, Arc, Mutex},

@@ -318,7 +318,7 @@ pub struct Event {
 /// won't work.
 ///
 /// ```no_run
-/// use redev::{Keyboard, EventType, Key, KeyboardState};
+/// use rdevin::{Keyboard, EventType, Key, KeyboardState};
 ///
 /// let mut keyboard = Keyboard::new().unwrap();
 /// let string = keyboard.add(&EventType::KeyPress(Key::KeyS)).unwrap().name.unwrap();

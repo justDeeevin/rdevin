@@ -1,6 +1,6 @@
 pub use super::common::HookError as ListenError;
 use crate::{
-    redev::Event,
+    rdevin::Event,
     windows::common::{convert, get_scan_code, set_key_hook, set_mouse_hook},
 };
 use std::{os::raw::c_int, ptr::null_mut, time::SystemTime};

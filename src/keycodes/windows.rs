@@ -1,4 +1,4 @@
-use crate::redev::Key;
+use crate::rdevin::Key;
 
 macro_rules! decl_keycodes {
     ($($key:ident, $code:literal, $scancode:literal),*) => {

@@ -1,5 +1,5 @@
 use lazy_static::lazy_static;
-use redev::{listen, simulate, Button, Event, EventType, Key};
+use rdevin::{listen, simulate, Button, Event, EventType, Key};
 use serial_test::serial;
 use std::error::Error;
 use std::iter::Iterator;

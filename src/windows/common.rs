@@ -1,5 +1,5 @@
 use crate::keycodes::windows::key_from_code;
-use crate::redev::{Button, EventType, Key};
+use crate::rdevin::{Button, EventType, Key};
 use crate::windows::keyboard::Keyboard;
 use lazy_static::lazy_static;
 use std::convert::TryInto;

@@ -7,7 +7,7 @@
 //! The [`listen`] and [`grab`][^1] functions can be used to run a callback for all input events.
 //!
 //! ```no_run
-//! redev::listen(|e| dbg!(e))?;
+//! rdevin::listen(|e| dbg!(e))?;
 //! ```
 //!
 //! ## Simulating input
@@ -15,7 +15,7 @@
 //! The [`simulate`] function can be used to send input events.
 //!
 //! ```no_run
-//! use redev::{simulate, EventType, Key};
+//! use rdevin::{simulate, EventType, Key};
 //!
 //! simulate(&EventType::KeyPress(Key::KeyS))?;
 //! ```
@@ -32,8 +32,8 @@
 //!
 //! [^1]: Not available on Linux
 
-mod redev;
-pub use crate::redev::{
+mod rdevin;
+pub use crate::rdevin::{
     Button, DisplayError, Event, EventType, GrabError, Key, KeyCode, KeyboardState, RawKey,
     SimulateError, UnicodeInfo,
 };
@@ -90,7 +90,7 @@ where
 /// # Example
 ///
 /// ```no_run
-/// use redev::{simulate, Button, EventType, Key};
+/// use rdevin::{simulate, Button, EventType, Key};
 ///
 /// simulate(&EventType::KeyPress(Key::KeyS));
 /// simulate(&EventType::KeyRelease(Key::KeyS));
@@ -124,7 +124,7 @@ pub fn display_size() -> Result<(u64, u64), DisplayError> {
 /// # Example
 ///
 /// ```no_run
-/// use redev::{grab, Event, EventType, Key};
+/// use rdevin::{grab, Event, EventType, Key};
 ///
 /// fn callback(event: Event) -> Option<Event> {
 ///     println!("My callback {:?}", event);

@@ -1,6 +1,6 @@
 use crate::keycodes::linux::code_from_key;
 use crate::linux::common::{FALSE, TRUE};
-use crate::redev::{Button, EventType, RawKey, SimulateError};
+use crate::rdevin::{Button, EventType, RawKey, SimulateError};
 use std::os::raw::c_int;
 use std::ptr::null;
 use x11::xlib;

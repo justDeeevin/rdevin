@@ -4,18 +4,18 @@ authors = [
   "Devin Droddy <devin.droddy@gmail.com>",
 ]
 edition = "2018"
-name = "redev"
+name = "rdevin"
 version = "0.1.0"
 exclude = ["flake.*"]
 
 categories = ["development-tools::testing", "api-bindings", "hardware-support"]
 description = "Cross-platform simulation and global listening for keyboard and mouse input."
-documentation = "https://docs.rs/redev/"
-homepage = "https://github.com/justdeeevin/redev"
+documentation = "https://docs.rs/rdevin/"
+homepage = "https://github.com/justdeeevin/rdevin"
 keywords = ["input", "mouse", "testing", "keyboard", "automation"]
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/justdeeevin/redev"
+repository = "https://github.com/justdeeevin/rdevin"
 
 [dependencies]
 enum-map = "2.4.0"

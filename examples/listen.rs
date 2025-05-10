@@ -1,6 +1,6 @@
 #[cfg(target_os = "windows")]
-use redev::get_win_key;
-use redev::{Event, EventType::*, Key as RdevKey, Keyboard as RdevKeyboard, KeyboardState};
+use rdevin::get_win_key;
+use rdevin::{Event, EventType::*, Key as RdevKey, Keyboard as RdevKeyboard, KeyboardState};
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -78,19 +78,19 @@ fn main() {
         #[cfg(target_os = "windows")]
         println!("{:?}", _key);
 
-        let linux_keycode = redev::keycodes::linux::code_from_key(_key).unwrap();
+        let linux_keycode = rdevin::keycodes::linux::code_from_key(_key).unwrap();
         // Mac/Linux Numpad -> Windows ArrawKey
         // https://github.com/asur4s/rustdesk/blob/fe9923109092827f543560a7af42dff6c3135117/src/ui/remote.rs#L968
-        let win_scancode = redev::keycodes::windows::scancode_from_key(_key).unwrap();
-        let macos_keycode = redev::keycodes::macos::code_from_key(_key).unwrap();
+        let win_scancode = rdevin::keycodes::windows::scancode_from_key(_key).unwrap();
+        let macos_keycode = rdevin::keycodes::macos::code_from_key(_key).unwrap();
         println!("Linux keycode {:?}", linux_keycode);
         println!("Windows scancode {:?}", win_scancode);
         println!("Mac OS keycode {:?}", macos_keycode);
 
         println!("--------------");
     };
-    if let Err(error) = redev::listen(func) {
-        // redev::listen
+    if let Err(error) = rdevin::listen(func) {
+        // rdevin::listen
         dbg!("{:?}", error);
     }
 }

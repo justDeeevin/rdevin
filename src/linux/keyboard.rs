@@ -1,6 +1,6 @@
 extern crate x11;
 use crate::keycodes::linux::code_from_key;
-use crate::redev::{EventType, KeyboardState, UnicodeInfo};
+use crate::rdevin::{EventType, KeyboardState, UnicodeInfo};
 use std::convert::TryInto;
 use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_int, c_uint, c_ulong, c_void};
@@ -300,7 +300,7 @@ mod tests {
     fn test_thread_safety() {
         let mut keyboard = Keyboard::new().unwrap();
         let char_s = keyboard
-            .add(&EventType::KeyPress(crate::redev::Key::KeyS))
+            .add(&EventType::KeyPress(crate::rdevin::Key::KeyS))
             .unwrap()
             .name
             .unwrap();
@@ -316,7 +316,7 @@ mod tests {
     fn test_thread_safety_2() {
         let mut keyboard = Keyboard::new().unwrap();
         let char_s = keyboard
-            .add(&EventType::KeyPress(crate::redev::Key::KeyS))
+            .add(&EventType::KeyPress(crate::rdevin::Key::KeyS))
             .unwrap()
             .name
             .unwrap();

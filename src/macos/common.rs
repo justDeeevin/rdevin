@@ -1,7 +1,7 @@
 #![allow(clippy::upper_case_acronyms)]
 use crate::keycodes::macos::virtual_keycodes::*;
 use crate::macos::keyboard::Keyboard;
-use crate::redev::{Button, Event, EventType, Key};
+use crate::rdevin::{Button, Event, EventType, Key};
 use cocoa::base::id;
 use core_graphics::{
     event::{CGEvent, CGEventFlags, CGEventTapLocation, CGEventType, CGKeyCode, EventField},

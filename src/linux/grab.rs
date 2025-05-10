@@ -1,4 +1,4 @@
-use crate::redev::UnicodeInfo;
+use crate::rdevin::UnicodeInfo;
 // This code is awful. Good luck
 use crate::{key_from_code, Event, EventType, GrabError, Keyboard, KeyboardState, ListenError};
 use log::error;

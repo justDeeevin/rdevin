@@ -1,7 +1,7 @@
 #![allow(non_upper_case_globals)]
 
 use super::macos_virtual_keycodes::*;
-use crate::redev::Key;
+use crate::rdevin::Key;
 
 pub use super::macos_virtual_keycodes as virtual_keycodes;
 
